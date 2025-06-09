@@ -1,7 +1,6 @@
 package com.example.task3.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,51 +13,41 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.task3.model.Item;
-import com.example.task3.repository.ItemRepository;
+import com.example.task3.service.ItemService;
 
 @RestController
 @RequestMapping("/items")
 public class ItemController {
     
     @Autowired
-    private ItemRepository itemRepository;
+    private ItemService itemService;
 
     // Create
     @PostMapping
     public Item createItem(@RequestBody Item item) {
-        return itemRepository.save(item);
+        return itemService.createItem(item);
     }
 
     // Read All
     @GetMapping
     public List<Item> getAllItems() {
-        return itemRepository.findAll();
+        return itemService.getAllItems();
     }
-
-    // Read by ID
+    //Read by ID
     @GetMapping("/{id}")
     public Item getItemById(@PathVariable int id) {
-        return itemRepository.findById(id).orElse(null);
+        return itemService.getItemById(id);
     }
 
     // Update
     @PutMapping("/{id}")
     public Item updateItem(@PathVariable int id, @RequestBody Item itemDetails) {
-        Optional<Item> optionalItem = itemRepository.findById(id);
-        if (optionalItem.isPresent()) {
-            Item item = optionalItem.get();
-            item.setName(itemDetails.getName());
-            item.setPrice(itemDetails.getPrice());
-            return itemRepository.save(item);
-        } else {
-            return null;
-        }
+        return itemService.updateItem(id, itemDetails);
     }
 
     // Delete
     @DeleteMapping("/{id}")
     public String deleteItem(@PathVariable int id) {
-        itemRepository.deleteById(id);
-        return "Item with id " + id + " deleted successfully.";
-    }   
+        return itemService.deleteItem(id);
+    } 
 }
